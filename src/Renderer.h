@@ -66,6 +66,7 @@ typedef enum
     RendererCommandType_BindTexture,
     RendererCommandType_Clear,
     RendererCommandType_DrawQuad,
+    RendererCommandType_DrawCircle,
     RendererCommandType_DrawText
 } RendererCommandType;
 
@@ -98,6 +99,17 @@ typedef struct {
 } RendererCommandDrawText;
 
 typedef struct {
+    uint32_t x;
+    uint32_t y;
+    uint32_t radius;
+    uint32_t r;
+    uint32_t g;
+    uint32_t b;
+    uint32_t a;
+} RendererCommandDrawCircle;
+
+typedef struct {
+
     void* data;
     void* next;
     RendererCommandType type;
@@ -111,12 +123,12 @@ typedef struct {
 } RendererCommandStack;
 
 typedef struct {
+    RendererCommandStack command_stack;
     SDL_Window* window;
     SDL_Renderer* renderer;
     SDL_Surface* surface;
     uint32_t width;
     uint32_t height;
-    RendererCommandStack command_stack;
 } RendererDataType;
 
 /***********************************************************************************************************************
@@ -127,6 +139,7 @@ extern RendererResultType RendererInit( uint32_t width, uint32_t height );
 extern void RendererDestroy( void );
 extern void RendererPresent( void );
 extern void RendererCmdDrawQuad( RendererCommandDrawQuad* quad );
+extern void RendererCmdDrawCircle( RendererCommandDrawCircle* circle );
 extern void RendererCmdDrawText( RendererCommandDrawText* text );
 extern void RendererCmdClear( RendererCommandClear* clear );
 extern void RendererCmdFlush( void );

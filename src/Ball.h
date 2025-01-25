@@ -1,5 +1,6 @@
-#ifndef PONG_DEFS
-#define PONG_DEFS
+#ifndef Ball_HEADER
+#define Ball_HEADER
+
 /**
  * @file
  * @author Krusto Stoyanov ( k.stoianov2@gmail.com )
@@ -32,62 +33,46 @@
  * 
  * @section DESCRIPTION
  * 
- * Pong Type Definitions
+ * Ball management
  */
 
 
 /***********************************************************************************************************************
 Includes
 ***********************************************************************************************************************/
-#include "Ball.h"
-#include "Memory.h"
-#include "Paddle.h"
-#include "Player.h"
+#include "Events.h"
+#include "Math.h"
 #include "STDTypes.h"
 #include "Timestep.h"
 
-
-#include <vector.h>
-
-#ifndef NON_STD_MATH
-#include <math.h>
-#endif
-
 /***********************************************************************************************************************
-Macro definitions
+Macro Definitions
 ***********************************************************************************************************************/
 
+
 /***********************************************************************************************************************
-Type definitions
+Type Declarations
 ***********************************************************************************************************************/
-typedef enum
-{
-    Pong_Result_None = 0,
-    Pong_Result_Success,
-    Pong_Result_Error
-} PongResultType;
+typedef struct {
+    uint32_t Ball_SPEED;
+    uint32_t Ball_RADIUS;
+    uint32_t Ball_COLOR_R;
+    uint32_t Ball_COLOR_G;
+    uint32_t Ball_COLOR_B;
+} BallConstantsType;
 
-typedef enum
-{
-    Pong_State_None = 0,
-    Pong_State_Init,
-    Pong_State_Running,
-    Pong_State_Exit,
-    Pong_State_Error
-} PongStateType;
+typedef struct {
+    Point2i position;
+    double velocityX;
+    double velocityY;
+} Ball;
 
-typedef struct PongInternalDataType {
-    PongStateType state;
-    Time delta_time;
-    double fps;
+/***********************************************************************************************************************
+Function Prototypes
+***********************************************************************************************************************/
 
-    Player player1;
-    Player player2;
+extern void Ball_Init( Ball* ball, int32_t x, int32_t y, double velocityX, double velocityY );
+extern void Ball_Update( Ball* ball, Point2i player1Pos, Point2i player2Pos, Event* ev, Time* deltaTime );
+extern void Ball_Render( Ball* ball );
 
-    Ball ball;
-
-} PongInternalDataType;
-
-typedef PongInternalDataType Pong;
-
-#endif//PONG_DEFS
+#endif// Ball_HEADER

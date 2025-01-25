@@ -41,6 +41,7 @@
 Includes
 ***********************************************************************************************************************/
 #include "Events.h"
+#include "Math.h"
 #include "Paddle.h"
 #include "STDTypes.h"
 #include "Timestep.h"
@@ -64,17 +65,26 @@ typedef struct {
 
 typedef struct {
     Paddle paddle;
+    Point2i position;
     double velocity;
-    int32_t x;
-    int32_t y;
+    uint32_t id;
+    uint32_t score;
 } Player;
 
 /***********************************************************************************************************************
 Function Prototypes
 ***********************************************************************************************************************/
 
-extern void Player_Init( Player* player, int32_t x, int32_t y );
+extern void Player_Init( Player* player, int32_t x, int32_t y, uint32_t id );
 extern void Player_Update( Player* player, Event* ev, Time* deltaTime );
 extern void Player_Render( Player* player );
+
+
+/***********************************************************************************************************************
+Global Const Variables
+***********************************************************************************************************************/
+
+static const PlayerConstantsType PLAYER_CONSTANTS = { 90, 20, 100, 255, 255, 255 };
+
 
 #endif// Player_HEADER

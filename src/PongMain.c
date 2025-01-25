@@ -47,7 +47,7 @@ Includes
 Static variables
 ***********************************************************************************************************************/
 
-PongStateType sPongStateTransitionTable[] = {
+PongStateType gPongStateTransitionTable[] = {
         /*Pong_State_None                    -->*/ Pong_State_Init,
         /*Pong_State_Init                    -->*/ Pong_State_Running,
         /*Pong_State_Running                 -->*/ Pong_State_Running,
@@ -55,7 +55,7 @@ PongStateType sPongStateTransitionTable[] = {
         /*Pong_State_Error                   -->*/ Pong_State_Error,
 };
 
-Pong* gPong = NULL;
+Pong gPong = {};
 
 /***********************************************************************************************************************
 Static function Prototypes
@@ -73,32 +73,24 @@ Implementation
 
 PongResultType CreatePong( void )
 {
-    gPong = Pong_MALLOC( sizeof( Pong ) );
-    gPong->delta_time.unit = TIME_MS;
-    AppInit( gPong );
+    gPong.delta_time.unit = TIME_MS;
+    AppInit( &gPong );
 
     Timer timer;
 
-    while ( gPong->state != Pong_State_Exit )
+    while ( gPong.state != Pong_State_Exit )
     {
         Timer_Start( &timer );
-        AppUpdate( gPong );
+        AppUpdate( &gPong );
         Timer_End( &timer );
-        gPong->delta_time.value = timer.t_ms;
-        gPong->fps = 1000.0 / gPong->delta_time.value;
+        gPong.delta_time.value = timer.t_ms;
+        gPong.fps = 1000.0 / gPong.delta_time.value;
     }
 
     return Pong_Result_Success;
 }
 
-void DestroyPong( void )
-{
-    if ( gPong )
-    {
-        RendererDestroy();
-        Pong_FREE( gPong );
-    }
-}
+void DestroyPong( void ) { RendererDestroy(); }
 
 PongStateType PongGetState( Pong* pong ) { return pong->state; }
 
@@ -128,12 +120,17 @@ PongResultType AppUpdate( Pong* pong )
     return result;
 }
 
-void AppUpdateState( Pong* pong ) { pong->state = sPongStateTransitionTable[ pong->state ]; }
+void AppUpdateState( Pong* pong ) { pong->state = gPongStateTransitionTable[ pong->state ]; }
 
 RendererResultType PongStateInit( Pong* pong )
 {
     RendererResultType result = RendererInit( 1280, 720 );
-    if ( result == Renderer_Result_Success ) { Player_Init( &pong->player, 0, 360 ); }
+    if ( result == Renderer_Result_Success )
+    {
+        Player_Init( &pong->player1, 0, 360, 0 );
+        Player_Init( &pong->player2, 1280 - 20, 360, 1 );
+        Ball_Init( &pong->ball, 640, 360, -1, 0.2 );
+    }
     return result;
 }
 
@@ -141,11 +138,11 @@ void ShowDebugInfo( Pong* pong )
 {
     RendererCommandDrawText text = { NULL, 0, 0, 255, 255, 255, 255 };
 
-    int length = snprintf( NULL, 0, "X: %d\nY: %d\nFPS: %lf\nDT: %lfms", pong->player.x, pong->player.y, pong->fps,
-                           pong->delta_time.value );
+    int length = snprintf( NULL, 0, "X: %d\nY: %d\nFPS: %lf\nDT: %lfms", pong->player1.position.x,
+                           pong->player1.position.y, pong->fps, pong->delta_time.value );
     text.text = Pong_MALLOC( length + 1 );
-    snprintf( text.text, length + 1, "X: %d\nY: %d\nFPS: %lf\nDT: %lfms", pong->player.x, pong->player.y, pong->fps,
-              pong->delta_time.value );
+    snprintf( text.text, length + 1, "X: %d\nY: %d\nFPS: %lf\nDT: %lfms", pong->player1.position.x,
+              pong->player1.position.y, pong->fps, pong->delta_time.value );
     RendererCmdDrawText( &text );
 
     RendererCmdFlush();
@@ -159,16 +156,21 @@ void PongStateUpdate( Pong* pong )
     event.type = EVENT_NONE;
     if ( PollEvents( &event ) && event.type == EVENT_QUIT ) { pong->state = Pong_State_Exit; }
 
-    Player_Update( &pong->player, &event, &pong->delta_time );
+    Player_Update( &pong->player1, &event, &pong->delta_time );
+    Player_Update( &pong->player2, &event, &pong->delta_time );
+    Ball_Update( &pong->ball, pong->player1.position, pong->player2.position, &event, &pong->delta_time );
 
     RendererCommandClear clear = { 0, 0, 0, 255 };
     RendererCmdClear( &clear );
 
-    Player_Render( &pong->player );
+    Player_Render( &pong->player1 );
+    Player_Render( &pong->player2 );
+    Ball_Render( &pong->ball );
 
     RendererCmdFlush();
 
+#ifdef _DEBUG
     ShowDebugInfo( pong );
-
+#endif
     RendererPresent();
 }

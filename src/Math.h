@@ -1,5 +1,6 @@
-#ifndef PONG_DEFS
-#define PONG_DEFS
+#ifndef Math_HEADER
+#define Math_HEADER
+
 /**
  * @file
  * @author Krusto Stoyanov ( k.stoianov2@gmail.com )
@@ -32,62 +33,30 @@
  * 
  * @section DESCRIPTION
  * 
- * Pong Type Definitions
+ * Math management
  */
 
 
 /***********************************************************************************************************************
 Includes
 ***********************************************************************************************************************/
-#include "Ball.h"
-#include "Memory.h"
-#include "Paddle.h"
-#include "Player.h"
 #include "STDTypes.h"
-#include "Timestep.h"
-
-
-#include <vector.h>
-
-#ifndef NON_STD_MATH
-#include <math.h>
-#endif
 
 /***********************************************************************************************************************
-Macro definitions
+Type Declarations
 ***********************************************************************************************************************/
+typedef struct {
+    int32_t x;
+    int32_t y;
+} Point2i;
+
+typedef struct {
+    float x;
+    float y;
+} Point2f;
 
 /***********************************************************************************************************************
-Type definitions
+Function Prototypes
 ***********************************************************************************************************************/
-typedef enum
-{
-    Pong_Result_None = 0,
-    Pong_Result_Success,
-    Pong_Result_Error
-} PongResultType;
 
-typedef enum
-{
-    Pong_State_None = 0,
-    Pong_State_Init,
-    Pong_State_Running,
-    Pong_State_Exit,
-    Pong_State_Error
-} PongStateType;
-
-typedef struct PongInternalDataType {
-    PongStateType state;
-    Time delta_time;
-    double fps;
-
-    Player player1;
-    Player player2;
-
-    Ball ball;
-
-} PongInternalDataType;
-
-typedef PongInternalDataType Pong;
-
-#endif//PONG_DEFS
+#endif// Math_HEADER
