@@ -30,118 +30,48 @@
  * 
  * @section DESCRIPTION
  * 
- * Renderer declarations
+ * Texture declarations
  */
 
-#ifndef PONG_RENDERER
-#define PONG_RENDERER
-
+#ifndef PONG_Texture
+#define PONG_Texture
 
 /***********************************************************************************************************************
 Includes
 ***********************************************************************************************************************/
-#include <SDL3/SDL.h>
-#include <SDL3/SDL_render.h>
-#include <STDTypes.h>
+#include "STDTypes.h"
 
 /***********************************************************************************************************************
 Macro definitions
 ***********************************************************************************************************************/
-#define RENDERER_MAX_COMMANDS 1024
 
 /***********************************************************************************************************************
 Type definitions
 ***********************************************************************************************************************/
-typedef enum
-{
-    Renderer_Result_None = 0,
-    Renderer_Result_Success,
-    Renderer_Result_Error
-} RendererResultType;
-
-typedef enum
-{
-    RendererCommandType_None = 0,
-    RendererCommandType_BindShader,
-    RendererCommandType_BindTexture,
-    RendererCommandType_Clear,
-    RendererCommandType_DrawQuad,
-    RendererCommandType_DrawCircle,
-    RendererCommandType_DrawText
-} RendererCommandType;
-
 typedef struct {
-    uint32_t x;
-    uint32_t y;
     uint32_t width;
     uint32_t height;
-    uint32_t r;
-    uint32_t g;
-    uint32_t b;
-    uint32_t a;
-} RendererCommandDrawQuad;
+    uint32_t channels;
+} TextureInfo;
+
+typedef enum
+{
+    TextureResult_None = 0,
+    TextureResult_Success,
+    TextureResult_Error
+} TextureResultType;
 
 typedef struct {
-    uint32_t r;
-    uint32_t g;
-    uint32_t b;
-    uint32_t a;
-} RendererCommandClear;
-
-typedef struct {
-    char* text;
-    uint32_t x;
-    uint32_t y;
-    uint32_t r;
-    uint32_t g;
-    uint32_t b;
-    uint32_t a;
-} RendererCommandDrawText;
-
-typedef struct {
-    uint32_t x;
-    uint32_t y;
-    uint32_t radius;
-    uint32_t r;
-    uint32_t g;
-    uint32_t b;
-    uint32_t a;
-} RendererCommandDrawCircle;
-
-typedef struct {
-
+    TextureInfo info;
     void* data;
-    void* next;
-    RendererCommandType type;
-} RendererCommandNode;
-
-typedef void RendererCommand;
-
-typedef struct {
-    RendererCommandNode* head;
-    RendererCommandNode* current;
-} RendererCommandStack;
-
-typedef struct {
-    RendererCommandStack command_stack;
-    SDL_Window* window;
-    SDL_Renderer* renderer;
-    SDL_Surface* surface;
-    uint32_t width;
-    uint32_t height;
-} RendererDataType;
+} Texture;
 
 /***********************************************************************************************************************
 Functions declarations
 ************************************************************************************************************************/
-extern RendererResultType RendererInit( uint32_t width, uint32_t height );
 
-extern void RendererDestroy( void );
-extern void RendererPresent( void );
-extern void RendererCmdDrawQuad( RendererCommandDrawQuad* quad );
-extern void RendererCmdDrawCircle( RendererCommandDrawCircle* circle );
-extern void RendererCmdDrawText( RendererCommandDrawText* text );
-extern void RendererCmdClear( RendererCommandClear* clear );
-extern void RendererCmdFlush( void );
-extern RendererDataType* RendererGet( void );
+extern TextureResultType Texture_Init( Texture* texture, uint32_t width, uint32_t height, uint32_t channels );
+extern TextureResultType Texture_SetData( Texture* texture, void* data );
+extern TextureResultType Texture_Destroy( Texture* texture );
+
 #endif

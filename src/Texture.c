@@ -1,6 +1,3 @@
-#ifndef Ball_HEADER
-#define Ball_HEADER
-
 /**
  * @file
  * @author Krusto Stoyanov ( k.stoianov2@gmail.com )
@@ -33,48 +30,55 @@
  * 
  * @section DESCRIPTION
  * 
- * Ball management
+ * Texture declarations
  */
-
 
 /***********************************************************************************************************************
 Includes
 ***********************************************************************************************************************/
-#include "Events.h"
-#include "Math.h"
-#include "STDTypes.h"
-#include "Timestep.h"
+#include "Texture.h"
+#include "Renderer.h"
+#include <SDL3/SDL_render.h>
 
 /***********************************************************************************************************************
-Macro Definitions
+Macro definitions
 ***********************************************************************************************************************/
-
 
 /***********************************************************************************************************************
-Type Declarations
-***********************************************************************************************************************/
-typedef struct {
-    uint32_t Ball_SPEED;
-    uint32_t Ball_RADIUS;
-    uint32_t Ball_COLOR_R;
-    uint32_t Ball_COLOR_G;
-    uint32_t Ball_COLOR_B;
-} BallConstantsType;
+Functions declarations
+************************************************************************************************************************/
 
-typedef struct {
-    Point2i position;
-    double velocityX;
-    double velocityY;
-    double acceleration;
-    double time_passed;
-} Ball;
+TextureResultType Texture_Init( Texture* texture, uint32_t width, uint32_t height, uint32_t channels )
+{
+    texture->info.width = width;
+    texture->info.height = height;
+    texture->info.channels = channels;
+    texture->data = NULL;
 
-/***********************************************************************************************************************
-Function Prototypes
-***********************************************************************************************************************/
+    if ( texture->info.width == 0 || texture->info.height == 0 || texture->info.channels == 0 )
+    {
+        return TextureResult_Error;
+    }
+    SDL_PixelFormat format;
+    if ( channels >= 4 ) { format = SDL_PIXELFORMAT_RGBA8888; }
+    else if ( channels == 3 ) { format = SDL_PIXELFORMAT_XRGB8888; }
+    else if ( channels == 2 ) { format = SDL_PIXELFORMAT_RGB565; }
+    else { return TextureResult_Error; }
 
-extern void Ball_Init( Ball* ball, int32_t x, int32_t y, double velocityX, double velocityY );
-extern void Ball_Update( Ball* ball, Point2i player1Pos, Point2i player2Pos, Event* ev, Time* deltaTime );
-extern void Ball_Render( Ball* ball );
+    texture->data =
+            ( void* ) SDL_CreateTexture( RendererGet()->renderer, format, SDL_TEXTUREACCESS_STATIC, width, height );
+    return TextureResult_Success;
+}
 
-#endif// Ball_HEADER
+TextureResultType Texture_SetData( Texture* texture, void* data )
+{
+    texture->data = data;
+    return TextureResult_Success;
+}
+
+TextureResultType Texture_Destroy( Texture* texture )
+{
+    SDL_DestroyTexture( texture->data );
+    texture->data = NULL;
+    return TextureResult_Success;
+}

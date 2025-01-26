@@ -27,7 +27,7 @@ void Player_Update( Player* player, Event* ev, Time* deltaTime )
     {
         if ( ev->keyEvent.type == KEY_PRESSED )
         {
-            if ( player->id == 0 )
+            if ( player->id == 1 )
             {
 
                 switch ( ev->keyEvent.key )
@@ -42,7 +42,7 @@ void Player_Update( Player* player, Event* ev, Time* deltaTime )
                         break;
                 }
             }
-            else if ( player->id == 1 )
+            else if ( player->id == 0 )
             {
 
                 switch ( ev->keyEvent.key )

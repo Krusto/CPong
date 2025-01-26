@@ -181,3 +181,5 @@ void RendererCmdFlush( void )
         Pong_FREE( node );
     }
 }
+
+RendererDataType* RendererGet( void ) { return g_renderer; }
