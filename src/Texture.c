@@ -76,6 +76,12 @@ TextureResultType Texture_SetData( Texture* texture, void* data )
     return TextureResult_Success;
 }
 
+TextureResultType Texture_GetInfo( Texture* texture, TextureInfo** info )
+{
+    *info = &texture->info;
+    return TextureResult_Success;
+}
+
 TextureResultType Texture_Destroy( Texture* texture )
 {
     SDL_DestroyTexture( texture->data );

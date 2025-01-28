@@ -30,49 +30,42 @@
  * 
  * @section DESCRIPTION
  * 
- * Texture declarations
+ * Fonts declarations
  */
-
-#ifndef PONG_Texture
-#define PONG_Texture
 
 /***********************************************************************************************************************
 Includes
 ***********************************************************************************************************************/
-#include "STDTypes.h"
+#include "Fonts.h"
+#include "Renderer.h"
+#include <SDL3/SDL.h>
 
 /***********************************************************************************************************************
 Macro definitions
 ***********************************************************************************************************************/
 
 /***********************************************************************************************************************
-Type definitions
-***********************************************************************************************************************/
-typedef struct {
-    uint32_t width;
-    uint32_t height;
-    uint32_t channels;
-} TextureInfo;
-
-typedef enum
-{
-    TextureResult_None = 0,
-    TextureResult_Success,
-    TextureResult_Error
-} TextureResultType;
-
-typedef struct {
-    TextureInfo info;
-    void* data;
-} Texture;
-
-/***********************************************************************************************************************
 Functions declarations
 ************************************************************************************************************************/
 
-extern TextureResultType Texture_Init( Texture* texture, uint32_t width, uint32_t height, uint32_t channels );
-extern TextureResultType Texture_SetData( Texture* texture, void* data );
-extern TextureResultType Texture_GetInfo( Texture* texture, TextureInfo** info );
-extern TextureResultType Texture_Destroy( Texture* texture );
+void FontsInit( void ) { TTF_Init(); }
 
-#endif
+FontResultType FontsGetFont( const char* name, uint32_t size, Font* font )
+{
+    TTF_Font* font_ptr = TTF_OpenFont( name, size );
+    if ( font_ptr == NULL ) { return FONT_RESULT_NOT_FOUND; }
+
+    font->name = name;
+    font->size = size;
+    font->data = font_ptr;
+    return FONT_RESULT_SUCCESS;
+}
+
+FontResultType FontsGetFontByType( const char* name, uint32_t size, FontType type, Font* font )
+{
+    return FontResultType();
+}
+
+FontResultType FreeFont( Font* font ) { return FontResultType(); }
+
+void FontsQuit( void ) {}

@@ -40,9 +40,11 @@
 /***********************************************************************************************************************
 Includes
 ***********************************************************************************************************************/
+#include "Texture.h"
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_render.h>
 #include <STDTypes.h>
+
 
 /***********************************************************************************************************************
 Macro definitions
@@ -66,6 +68,7 @@ typedef enum
     RendererCommandType_BindTexture,
     RendererCommandType_Clear,
     RendererCommandType_DrawQuad,
+    RendererCommandType_DrawTexture,
     RendererCommandType_DrawCircle,
     RendererCommandType_DrawText
 } RendererCommandType;
@@ -97,6 +100,12 @@ typedef struct {
     uint32_t b;
     uint32_t a;
 } RendererCommandDrawText;
+
+typedef struct {
+    uint32_t x;
+    uint32_t y;
+    Texture* texture;
+} RendererCommandDrawTexture;
 
 typedef struct {
     uint32_t x;
@@ -139,6 +148,7 @@ extern RendererResultType RendererInit( uint32_t width, uint32_t height );
 extern void RendererDestroy( void );
 extern void RendererPresent( void );
 extern void RendererCmdDrawQuad( RendererCommandDrawQuad* quad );
+extern void RendererCmdDrawTexture( RendererCommandDrawTexture* texture );
 extern void RendererCmdDrawCircle( RendererCommandDrawCircle* circle );
 extern void RendererCmdDrawText( RendererCommandDrawText* text );
 extern void RendererCmdClear( RendererCommandClear* clear );

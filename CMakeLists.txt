@@ -17,7 +17,7 @@ endif()
 
 add_subdirectory(Vendor/Vector)
 
-add_library(PongLib STATIC ./src/PongMain.c ./src/Renderer.c ./src/Events.c ./src/Timestep.c ./src/Paddle.c ./src/Player.c ./src/Ball.c)
+add_library(PongLib STATIC ./src/PongMain.c ./src/Renderer.c ./src/Texture.c ./src/Fonts.c ./src/Events.c ./src/Timestep.c ./src/Paddle.c ./src/Player.c ./src/Ball.c)
 
 target_include_directories(PongLib PUBLIC Vendor/Vector)
 

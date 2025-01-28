@@ -30,11 +30,11 @@
  * 
  * @section DESCRIPTION
  * 
- * Texture declarations
+ * Fonts declarations
  */
 
-#ifndef PONG_Texture
-#define PONG_Texture
+#ifndef PONG_Fonts
+#define PONG_Fonts
 
 /***********************************************************************************************************************
 Includes
@@ -48,31 +48,36 @@ Macro definitions
 /***********************************************************************************************************************
 Type definitions
 ***********************************************************************************************************************/
+typedef enum
+{
+    FONT_RESULT_NONE = 0,
+    FONT_RESULT_SUCCESS,
+    FONT_RESULT_NOT_FOUND,
+    FONT_RESULT_ERROR
+} FontResultType;
+
 typedef struct {
-    uint32_t width;
-    uint32_t height;
-    uint32_t channels;
-} TextureInfo;
+    const char* name;
+    uint32_t size;
+    void* data;
+} Font;
 
 typedef enum
 {
-    TextureResult_None = 0,
-    TextureResult_Success,
-    TextureResult_Error
-} TextureResultType;
-
-typedef struct {
-    TextureInfo info;
-    void* data;
-} Texture;
+    FONT_NORMAL = 0,
+    FONT_BOLD,
+    FONT_ITALIC,
+    FONT_BOLD_ITALIC
+} FontType;
 
 /***********************************************************************************************************************
 Functions declarations
 ************************************************************************************************************************/
 
-extern TextureResultType Texture_Init( Texture* texture, uint32_t width, uint32_t height, uint32_t channels );
-extern TextureResultType Texture_SetData( Texture* texture, void* data );
-extern TextureResultType Texture_GetInfo( Texture* texture, TextureInfo** info );
-extern TextureResultType Texture_Destroy( Texture* texture );
+extern void FontsInit( void );
+extern FontResultType FontsGetFont( const char* name, uint32_t size, Font* font );
+extern FontResultType FontsGetFontByType( const char* name, uint32_t size, FontType type, Font* font );
+extern FontResultType FreeFont( Font* font );
+extern void FontsQuit( void );
 
 #endif

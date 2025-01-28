@@ -91,6 +91,11 @@ void RendererCmdDrawQuad( RendererCommandDrawQuad* quad )
     RendererPushCommand( RendererCommandType_DrawQuad, quad, sizeof( RendererCommandDrawQuad ) );
 }
 
+void RendererCmdDrawTexture( RendererCommandDrawTexture* texture )
+{
+    RendererPushCommand( RendererCommandType_DrawTexture, texture, sizeof( RendererCommandDrawTexture ) );
+}
+
 void RendererCmdDrawCircle( RendererCommandDrawCircle* circle )
 {
     RendererPushCommand( RendererCommandType_DrawCircle, circle, sizeof( RendererCommandDrawCircle ) );
@@ -144,6 +149,16 @@ inline static void HandleNode( RendererCommandNode* node )
             rect.h = quad->height;
             SDL_SetRenderDrawColor( g_renderer->renderer, quad->r, quad->g, quad->b, quad->a );
             SDL_RenderFillRect( g_renderer->renderer, &rect );
+            break;
+        }
+        case RendererCommandType_DrawTexture: {
+            RendererCommandDrawTexture* cmd = ( RendererCommandDrawTexture* ) node->data;
+            SDL_FRect rect;
+            rect.x = cmd->x;
+            rect.y = cmd->y;
+            rect.w = cmd->texture->info.width;
+            rect.h = cmd->texture->info.height;
+            SDL_RenderTexture( g_renderer->renderer, ( SDL_Texture* ) cmd->texture->data, NULL, NULL );
             break;
         }
         case RendererCommandType_DrawCircle: {
