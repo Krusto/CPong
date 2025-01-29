@@ -91,14 +91,29 @@ typedef struct {
     uint32_t a;
 } RendererCommandClear;
 
+typedef enum
+{
+    TextAlign_TopLeft = 0,
+    TextAlign_TopCenter,
+    TextAlign_TopRight,
+    TextAlign_Left,
+    TextAlign_Center,
+    TextAlign_Right,
+    TextAlign_BottomLeft,
+    TextAlign_BottomCenter,
+    TextAlign_BottomRight,
+} RendererTextAlignAttribute;
+
 typedef struct {
     char* text;
-    uint32_t x;
-    uint32_t y;
+    void* font;
+    int32_t x;
+    int32_t y;
     uint32_t r;
     uint32_t g;
     uint32_t b;
     uint32_t a;
+    RendererTextAlignAttribute align;
 } RendererCommandDrawText;
 
 typedef struct {

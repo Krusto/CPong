@@ -56,12 +56,6 @@ typedef enum
     FONT_RESULT_ERROR
 } FontResultType;
 
-typedef struct {
-    const char* name;
-    uint32_t size;
-    void* data;
-} Font;
-
 typedef enum
 {
     FONT_NORMAL = 0,
@@ -70,14 +64,37 @@ typedef enum
     FONT_BOLD_ITALIC
 } FontType;
 
+typedef struct {
+    uint32_t size;
+    const char* name;
+    void* data;
+    FontType type;
+} Font;
+
+typedef struct {
+    Font* data;
+    Font* next;
+} FontNode;
+
+typedef struct {
+    FontNode* head;
+    FontNode* current;
+} FontStack;
+
+typedef struct {
+    FontStack fonts;
+    uint32_t font_count;
+} FontAtlas;
+
 /***********************************************************************************************************************
 Functions declarations
 ************************************************************************************************************************/
 
-extern void FontsInit( void );
-extern FontResultType FontsGetFont( const char* name, uint32_t size, Font* font );
-extern FontResultType FontsGetFontByType( const char* name, uint32_t size, FontType type, Font* font );
+extern FontResultType LoadFont( const char* name, uint32_t size, Font* font );
 extern FontResultType FreeFont( Font* font );
-extern void FontsQuit( void );
+
+extern FontResultType FontAtlasLoadFont( const char* name, uint32_t size, FontType type, FontAtlas* atlas );
+extern FontResultType FontAtlasFreeFont( FontAtlas* atlas, const char* name, FontType type );
+extern Font* FontAtlasGetFont( FontAtlas* atlas, const char* name, FontType type );
 
 #endif

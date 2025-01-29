@@ -42,6 +42,7 @@ Includes
 ***********************************************************************************************************************/
 #include "Events.h"
 #include "Math.h"
+#include "Player.h"
 #include "STDTypes.h"
 #include "Timestep.h"
 
@@ -74,7 +75,7 @@ Function Prototypes
 ***********************************************************************************************************************/
 
 extern void Ball_Init( Ball* ball, int32_t x, int32_t y, double velocityX, double velocityY );
-extern void Ball_Update( Ball* ball, Point2i player1Pos, Point2i player2Pos, Event* ev, Time* deltaTime );
+extern void Ball_Update( Ball* ball, Player* player1, Player* player2, Event* ev, Time* deltaTime );
 extern void Ball_Render( Ball* ball );
 
 #endif// Ball_HEADER

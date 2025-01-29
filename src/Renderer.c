@@ -37,7 +37,10 @@
 Includes
 ***********************************************************************************************************************/
 #include "Renderer.h"
+#include "Fonts.h"
 #include "Memory.h"
+#include <SDL3_ttf/SDL_ttf.h>
+
 
 /***********************************************************************************************************************
 Static variables
@@ -71,13 +74,15 @@ RendererResultType RendererInit( uint32_t width, uint32_t height )
     g_renderer->surface = SDL_GetWindowSurface( g_renderer->window );
     if ( g_renderer->surface == NULL ) { return Renderer_Result_Error; }
 
+    TTF_Init();
+
     return Renderer_Result_Success;
 }
 
 void RendererDestroy( void )
 {
     if ( g_renderer == NULL ) { return; }
-
+    TTF_Quit();
     SDL_DestroyRenderer( g_renderer->renderer );
     SDL_DestroyWindow( g_renderer->window );
     SDL_Quit();
@@ -174,8 +179,64 @@ inline static void HandleNode( RendererCommandNode* node )
         }
         case RendererCommandType_DrawText: {
             RendererCommandDrawText* text = ( RendererCommandDrawText* ) node->data;
-            SDL_SetRenderDrawColor( g_renderer->renderer, text->r, text->g, text->b, text->a );
-            SDL_RenderDebugText( g_renderer->renderer, text->x, text->y, text->text );
+            SDL_Color color;
+            color.r = text->r;
+            color.g = text->g;
+            color.b = text->b;
+            color.a = text->a;
+            TTF_Font* font = ( ( Font* ) text->font )->data;
+            SDL_Surface* surface = TTF_RenderText_Blended( font, text->text, strlen( text->text ),
+                                                           color );// TODO: destroy surface?
+            SDL_Texture* texture = SDL_CreateTextureFromSurface(
+                    g_renderer->renderer, surface );// ! Crashed on/before? shutdown from thisline's mem alloc???
+            SDL_DestroySurface( surface );
+            SDL_FRect dstRect;
+            switch ( text->align )
+            {
+                case TextAlign_TopLeft:
+                    dstRect.x = text->x;
+                    dstRect.y = text->y;
+                    break;
+                case TextAlign_TopCenter:
+                    dstRect.x = ( g_renderer->width / 2.0f - texture->w / 2.0f ) + text->x;
+                    dstRect.y = text->y;
+                    break;
+                case TextAlign_TopRight:
+                    dstRect.x = text->x - ( g_renderer->width - texture->w );
+                    dstRect.y = text->y;
+                    break;
+                case TextAlign_Left:
+                    dstRect.x = text->x;
+                    dstRect.y = ( g_renderer->height / 2.0f - texture->h / 2.0f ) + text->y;
+                    break;
+                case TextAlign_Center:
+                    dstRect.x = ( g_renderer->width / 2.0f - texture->w / 2.0f ) + text->x;
+                    dstRect.y = ( g_renderer->height / 2.0f - texture->h / 2.0f ) + text->y;
+                    break;
+                case TextAlign_Right:
+                    dstRect.x = text->x - ( g_renderer->width - texture->w );
+                    dstRect.y = ( g_renderer->height / 2.0f - texture->h / 2.0f ) + text->y;
+                    break;
+                case TextAlign_BottomLeft:
+                    dstRect.x = text->x;
+                    dstRect.y = ( g_renderer->height - texture->h ) + text->y;
+                    break;
+                case TextAlign_BottomCenter:
+                    dstRect.x = ( g_renderer->width / 2.0f - texture->w / 2.0f ) + text->x;
+                    dstRect.y = ( g_renderer->height - texture->h ) + text->y;
+                    break;
+                case TextAlign_BottomRight:
+                    dstRect.x = text->x - ( g_renderer->width - texture->w );
+                    dstRect.y = ( g_renderer->height - texture->h ) + text->y;
+                    break;
+                default:
+                    break;
+            }
+            dstRect.w = texture->w;
+            dstRect.h = texture->h;
+            SDL_RenderTexture( g_renderer->renderer, texture, NULL, &dstRect );
+            SDL_DestroyTexture( texture );
+            SDL_DestroySurface( surface );
             break;
         }
         default:

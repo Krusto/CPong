@@ -40,6 +40,7 @@
 Includes
 ***********************************************************************************************************************/
 #include "Ball.h"
+#include "Fonts.h"
 #include "Memory.h"
 #include "Paddle.h"
 #include "Player.h"
@@ -71,6 +72,7 @@ typedef enum
 {
     Pong_State_None = 0,
     Pong_State_Init,
+    Pong_State_Paused,
     Pong_State_Running,
     Pong_State_Exit,
     Pong_State_Error
@@ -79,12 +81,15 @@ typedef enum
 typedef struct PongInternalDataType {
     PongStateType state;
     Time delta_time;
+    Time passed_time;
+    double fading_speed;
     double fps;
 
     Player player1;
     Player player2;
 
     Ball ball;
+    FontAtlas fonts;
 
 } PongInternalDataType;
 
